@@ -19,26 +19,26 @@ def mini_parallel(x,stop,size):
 		N = int(n_runs/size)
 
 		# Evenly distribute number of simulation runs across processes
-    	np.random.seed(25)
-    	eps_mat=sts.norm.rvs(loc=0,scale=sigma,size=(T,N))
-    	z_mat=np.zeros((T,N))
-    	z_mat[0,:]=z_0
+		np.random.seed(25)
+		eps_mat=sts.norm.rvs(loc=0,scale=sigma,size=(T,N))
+		z_mat=np.zeros((T,N))
+		z_mat[0,:]=z_0
 
-    	# Simulate N random walks and specify as a NumPy Array
-    	all_t=[]
-    	for s_ind in range(N):
-    		z_tm1=z_0
-    		i=0
-    		for t_ind in range(T):
-    			i=i+1
-    			e_t=eps_mat[t_ind,s_ind]
-    			z_t=rho*z_tm1+(1-rho)*mu+e_t
-    			z_mat[t_ind,s_ind]=z_t
-    			if z_t<=0:
-    				all_t.append(i)
-    				break
-    			z_tm1=z_t
-    	all_t_array=np.array(all_t)
+		# Simulate N random walks and specify as a NumPy Array
+		all_t=[]
+		for s_ind in range(N):
+			z_tm1=z_0
+			i=0
+			for t_ind in range(T):
+				i=i+1
+				e_t=eps_mat[t_ind,s_ind]
+				z_t=rho*z_tm1+(1-rho)*mu+e_t
+				z_mat[t_ind,s_ind]=z_t
+				if z_t<=0:
+					all_t.append(i)
+					break
+				z_tm1=z_t
+		all_t_array=np.array(all_t)
 
     	# Gather all simulation arrays to buffer of expected size/dtype on rank 0
     	t_all = None
@@ -46,10 +46,9 @@ def mini_parallel(x,stop,size):
     		t_all = np.empty([N*size, 1], dtype='float')
     	comm.Gather(sendbuf = all_t_array, recvbuf = t_all, root=0)
 
-    	if rank==0:
-    		avgt=np.mean(t_all)
-    		return -avgt
-
+		if rank==0:
+			avgt=np.mean(t_all)
+			return -avgt
 
 def sim_rho_parallel(n_runs):
 	comm = MPI.COMM_WORLD
