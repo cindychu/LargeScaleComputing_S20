@@ -16,4 +16,4 @@ module load mpi4py/3.0.1a0_py3
 mpirun python ./mpi_zmat_minitest.py
 
 # Wait until all simultaneous mpiruns are done
-wait
+#wait

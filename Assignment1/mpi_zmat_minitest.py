@@ -6,8 +6,8 @@ import scipy.stats as sts
 
 def sim_index_parallel(n_runs):
 	comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()
-    size = comm.Get_size()
+	rank = comm.Get_rank()
+	size = comm.Get_size()
 
     #set basic parameters
     rho=0.5
