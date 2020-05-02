@@ -76,16 +76,21 @@ def sim_index_parallel(n_runs):
         # Calculate time elapsed after computing mean and std
         #average_finish = np.mean(r_walks_all[:,-1])
         #std_finish = np.std(r_walks_all[:,-1])
+        x=[ a for (a,b) in rho_avgt_all]
+        y=[ b for (a,b) in rho_avgt_all]
+        max_periods=max(y)
+        max_rho=x[y.index(max_periods)]
         time_elapsed = time.time() - t0
 
         # Print time elapsed + simulation results
         print("Simulated %d in: %f seconds on %d MPI processes" % (n_runs, time_elapsed, size))
         #print("Average final position: %f, Standard Deviation: %f"
                 #% (average_finish, std_finish))
+        print("Max Period: %f; Max Rho: %f." % (max_periods,max_rho))
 
         # Plot Simulations and save to file
-        x=[ a for (a,b) in rho_avgt_all]
-        y=[ b for (a,b) in rho_avgt_all]
+        #x=[ a for (a,b) in rho_avgt_all]
+        #y=[ b for (a,b) in rho_avgt_all]
         plt.plot(x,y)
         plt.title('Averaged periods of first negative index across Rho')
         plt.xlabel('Rho')
