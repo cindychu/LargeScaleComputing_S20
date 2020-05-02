@@ -13,6 +13,24 @@ def sim_index_parallel(n_runs):
     # Start time:
     t0 = time.time()
 
+    #set basic parameters
+    #rho=0.5
+    mu=3.0
+    sigma=1.0
+    z_0=mu
+    T=int(4160)
+    S =1000  #1000 
+    z_mat=np.zeros((T,S))
+    z_mat0[0,:]=z_0
+
+    if rank==0:
+        #set random seed
+        np.random.seed(25)
+        eps_mat=sts.norm.rvs(loc=0,scale=sigma,size=(T,S))
+    else:
+        eps_mat=np.empty([T,S],dtype='float')
+    comm.Bcast(eps_mat,root=0)
+
     #distribute rho
     N=int(n_runs/size)
     if rank==0:
@@ -24,25 +42,10 @@ def sim_index_parallel(n_runs):
 
     rho_set=np.empty(N,dtype='float')
     comm.Scatter(rho_set0,rho_set,root=0)
-    print('Before Scatter: process %d has %s' % (rank, rho_set))
-
-    #set basic parameters
-    #rho=0.5
-    mu=3.0
-    sigma=1.0
-    z_0=mu
-    T=int(4160)
-
-    #set random seed
-    np.random.seed(25)
-    
-    S =1000  #1000 
-    eps_mat=sts.norm.rvs(loc=0,scale=sigma,size=(T,S))
-    rho_avgt=[]
-    z_mat=np.zeros((T,S))
-    z_mat[0,:]=z_0
+    #print('After Scatter: process %d has %s' % (rank, rho_set))
 
     # Simulate S random walks by N rhos and specify as a NumPy Array
+    rho_avgt=[]
     for rho in rho_set:
         avg_t=[]
         for s_ind in range(S):
