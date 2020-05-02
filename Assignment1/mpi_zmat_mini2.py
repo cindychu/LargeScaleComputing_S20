@@ -2,68 +2,93 @@ from mpi4py import MPI
 import matplotlib.pyplot as plt
 import numpy as np
 import time
-import scipy.stats as sts 
+import scipy.stats as sts
+from scipy.optimize import minimize
 
-def sim_index_parallel(n_runs):
-    # Get rank of process and overall size of communicator:
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()
-    size = comm.Get_size()
+def mini_parallel(x,stop,size):
+	comm.Bcast(stop,root=0)
+	if stop[0]==0:
+		comm.Bcast(x,root=0)
+		rho=x[0]
+		mu=3.0
+		sigma=1.0
+		z_0=mu
+		T=int(4160)
 
-    #set basic parameters
-    rho=0.5
-    mu=3.0
-    sigma=1.0
-    z_0=mu
-    T=int(4160)
+		n_runs=10 #1000
+		N = int(n_runs/size)
 
-    #set random seed
-    np.random.seed(25)
+		# Evenly distribute number of simulation runs across processes
+    	np.random.seed(25)
+    	eps_mat=sts.norm.rvs(loc=0,scale=sigma,size=(T,N))
+    	z_mat=np.zeros((T,N))
+    	z_mat[0,:]=z_0
 
-    # Start time:
-    t0 = time.time()
+    	# Simulate N random walks and specify as a NumPy Array
+    	all_t=[]
+    	for s_ind in range(N):
+    		z_tm1=z_0
+    		i=0
+    		for t_ind in range(T):
+    			i=i+1
+    			e_t=eps_mat[t_ind,s_ind]
+    			z_t=rho*z_tm1+(1-rho)*mu+e_t
+    			z_mat[t_ind,s_ind]=z_t
+    			if z_t<=0:
+    				all_t.append(i)
+    				break
+    			z_tm1=z_t
+    	all_t_array=np.array(all_t)
 
-    # Evenly distribute number of simulation runs across processes
-    N = int(n_runs/size)
-    eps_mat=sts.norm.rvs(loc=0,scale=sigma,size=(T,N))
-    z_mat=np.zeros((T,N))
-    z_mat[0,:]=z_0
-    # Simulate N random walks and specify as a NumPy Array
+    	# Gather all simulation arrays to buffer of expected size/dtype on rank 0
+    	t_all = None
+    	if rank == 0:
+    		t_all = np.empty([N*size, 1], dtype='float')
+    	comm.Gather(sendbuf = all_t_array, recvbuf = t_all, root=0)
 
-    for s_ind in range(N):
-    	z_tm1=z_0
-    	for t_ind in range(T):
-    		e_t=eps_mat[t_ind,s_ind]
-    		z_t=rho*z_tm1+(1-rho)*mu+e_t
-    		z_mat[t_ind,s_ind]=z_t
-    		z_tm1=z_t
-    z_mat_array=np.array(z_mat)
+    	if rank==0:
+    		avgt=np.mean(t_all)
+    		return -avgt
 
-    # Gather all simulation arrays to buffer of expected size/dtype on rank 0
-    z_mat_all = None
-    if rank == 0:
-        z_mat_all = np.empty([T, N*size], dtype='float')
-    comm.Gather(sendbuf = z_mat_array, recvbuf = z_mat_all, root=0)
 
-    # Print/plot simulation results on rank 0
-    if rank == 0:
-        # Calculate time elapsed after computing mean and std
-        #average_finish = np.mean(r_walks_all[:,-1])
-        #std_finish = np.std(r_walks_all[:,-1])
-        time_elapsed = time.time() - t0
+def sim_rho_parallel(n_runs):
+	comm = MPI.COMM_WORLD
+	rank = comm.Get_rank()
+	size = comm.Get_size()
 
-        # Print time elapsed + simulation results
-        print("Simulated %d Random Walks in: %f seconds on %d MPI processes"
-                % (n_runs, time_elapsed, size))
-        #print("Average final position: %f, Standard Deviation: %f"
-                #% (average_finish, std_finish))
+	t0 = time.time()
+	#N=int(n_runs/size)
 
-        # Plot Simulations and save to file
-        #plt.plot(r_walks_all.transpose())
-        #plt.savefig("r_walk_nprocs%d_nruns%d.png" % (size, n_runs))
+	stop=np.ones(1)
+	x=np.zeros(1)
+
+	if rank==0:
+		stop[0]=0
+		x[0]=0.1
+		xmin=-0.95
+		xmax=0.95
+		rhomin=minimize(mini_parallel,x,args=(stop,size),method='COBYLA',bounds=((xmin,xmax),),options={'rhobeg':0.01})
+		stop=[1]
+		mini_parallel(x,stop)
+	else:
+		while stop[0]==0:
+			mini_parallel(x,stop,size)
+
+	if rank==0:
+		#print(rhomini.fun)
+		#print(rhomini.success)
+		#print(rhomini.x)
+		max_rho=rhomini.x
+		max_periods=rhomini.fun
+		
+		# Print time elapsed + simulation results
+		time_elapsed = time.time() - t0
+		print("Simulated %d in: %f seconds on %d MPI processes" % (n_runs, time_elapsed, size))
+		print("Max Period: %f; Max Rho: %f." % (max_periods,max_rho))			
+
 
 def main():
-    sim_index_parallel(n_runs = 1000)
+	sim_rho_parallel(n_runs = 1000)
 
 if __name__ == '__main__':
-    main()
+	main()
