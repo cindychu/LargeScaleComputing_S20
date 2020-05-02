@@ -21,7 +21,7 @@ def sim_index_parallel(n_runs):
     T=int(4160)
     S =1000  #1000 
     z_mat=np.zeros((T,S))
-    z_mat0[0,:]=z_0
+    z_mat[0,:]=z_0
 
     if rank==0:
         #set random seed
