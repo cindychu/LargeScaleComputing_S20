@@ -17,10 +17,10 @@ def sim_index_parallel(n_runs):
     N=int(n_runs/size)
     if rank==0:
         rho_set0=np.linspace(-0.95,0.95,n_runs)
-        print('Before Scatter: process %d has %s' % (rank, rho_set0))
+        #print('Before Scatter: process %d has %s' % (rank, rho_set0))
     else:
         rho_set0=None
-        print('Before Scatter: process %d has %s' % (rank, rho_set0))
+        #print('Before Scatter: process %d has %s' % (rank, rho_set0))
 
     rho_set=np.empty(N,dtype='float')
     comm.Scatter(rho_set0,rho_set,root=0)
@@ -36,7 +36,7 @@ def sim_index_parallel(n_runs):
     #set random seed
     np.random.seed(25)
     
-    S =10  #1000 
+    S =1000  #1000 
     eps_mat=sts.norm.rvs(loc=0,scale=sigma,size=(T,S))
     rho_avgt=[]
     z_mat=np.zeros((T,S))
@@ -84,11 +84,14 @@ def sim_index_parallel(n_runs):
         x=[ a for (a,b) in rho_avgt_all]
         y=[ b for (a,b) in rho_avgt_all]
         plt.plot(x,y)
+        plt.title('Averaged periods of first negative index across Rho')
+        plt.xlabel('Rho')
+        plt.ylabel('Avged Period')
         #plt.plot(r_walks_all.transpose())
         plt.savefig("rho_avgt%d_nruns%d.png" % (size, n_runs))
 
 def main():
-    sim_index_parallel(n_runs = 10)  #200
+    sim_index_parallel(n_runs = 200)  #200
 
 if __name__ == '__main__':
     main()

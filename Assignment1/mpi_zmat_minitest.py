@@ -19,24 +19,6 @@ def sim_index_parallel(n_runs):
     #set random seed
     #np.random.seed(25)
 
-    # Start time:
-<<<<<<< HEAD
-    t0 = time.time()
-
-    N=int(n_runs/size)
-    if rank==0:
-    	data=np.linspace(-0.95,0.95,10)
-    	print('Before Scatter: process %d has %s' % (rank, data))
-    else:
-    	data=np.empty(N,dtype='float')
-    	print('Before Scatter: process %d has %s' % (rank, data))
-
-    data=comm.Scatter(data,root=0)
-    print('Before Scatter: process %d has %s' % (rank, data))
-
-    time_elapsed = time.time() - t0
-    print("Simulated in: %f seconds on %d MPI processes" % (time_elapsed, size))
-=======
 	t0 = time.time()
 	N=int(n_runs/size)
 
@@ -53,14 +35,9 @@ def sim_index_parallel(n_runs):
 	
 	time_elapsed = time.time() - t0
 	print("Simulated in: %f seconds on %d MPI processes" % (time_elapsed, size))
->>>>>>> 0ce31b55179700f4b20ffa1647e49792a488dac2
 
 def main():
 	sim_index_parallel(n_runs = 10)
 
 if __name__ == '__main__':
-<<<<<<< HEAD
 	main()
-=======
-	main()
->>>>>>> 0ce31b55179700f4b20ffa1647e49792a488dac2
