@@ -30,12 +30,14 @@ else:
 
 eps_mat=np.empty([T,N],dtype='float')
 comm.Scatter(eps_mat0,eps_mat,root=0)
+print('Scatter EPS successfully')
 
 def mini_parallel(x,stop):
   print('before scatter stop')
   stop[0]=comm.bcast(stop[0], root=0)
+  print('after scatter stop')
   if stop[0]==0:
-    print(rank,x[0])
+    print("In minimize: proc%d, %f." % (rank,x[0]))
     x[0]=comm.bcast(x[0],root=0)
     rho=x[0]
     #print(rho)
@@ -84,13 +86,14 @@ if rank==0:
   x[0]=0.1
   xmin=-0.95
   xmax=0.95
+  print('Before minimize')
   rhomin=minimize(mini_parallel,x,args=(stop),method='COBYLA',bounds=((xmin,xmax),),options={'rhobeg':0.01,'tol':0.00001})
   stop[0]=1
   mini_parallel(x,stop)
 else:
   while stop[0]==0:
-    print(rank,x[0])
-    mini_parallel(x,stop,size)
+    print("Before minimize: proc%d, %f." % (rank,x[0]))
+    mini_parallel(x,stop)
   
 if rank==0:
   print(rhomin.fun)
