@@ -59,8 +59,8 @@ def sim_index_parallel(n_runs):
                 #% (average_finish, std_finish))
 
         # Plot Simulations and save to file
-        #plt.plot(r_walks_all.transpose())
-        #plt.savefig("r_walk_nprocs%d_nruns%d.png" % (size, n_runs))
+        plt.plot(z_mat_all)
+        plt.savefig("health_nprocs%d_nruns%d.png" % (size, n_runs))
 
 def main():
     sim_index_parallel(n_runs = 1000)
