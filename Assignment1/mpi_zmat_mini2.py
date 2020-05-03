@@ -51,13 +51,8 @@ def mini_parallel(x,stop,size):
 			return -avgt
 
 def sim_rho_parallel(n_runs):
-	comm = MPI.COMM_WORLD
-	rank = comm.Get_rank()
-	size = comm.Get_size()
-
 	t0 = time.time()
 	#N=int(n_runs/size)
-
 	stop=np.ones(1)
 	x=np.zeros(1)
 	
@@ -90,4 +85,7 @@ def main():
 	sim_rho_parallel(n_runs = 1000)
 
 if __name__ == '__main__':
+	comm = MPI.COMM_WORLD
+	rank = comm.Get_rank()
+	size = comm.Get_size()
 	main()
