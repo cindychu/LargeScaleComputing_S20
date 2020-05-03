@@ -40,12 +40,8 @@ def mini_parallel(x,stop,size):
 				z_tm1=z_t
 		all_t_array=np.array(all_t)
 
-<<<<<<< HEAD
-    		t_all = None
-=======
 		# Gather all simulation arrays to buffer of expected size/dtype on rank 0
 		#t_all = None
->>>>>>> 06e4df974e0dda341b4fa4887d40a9091b5d067a
 		if rank == 0:
 			t_all = np.empty([N*size, 1], dtype='float')
 		comm.Gather(sendbuf = all_t_array, recvbuf = t_all, root=0)
@@ -64,7 +60,7 @@ def sim_rho_parallel(n_runs):
 
 	stop=np.ones(1)
 	x=np.zeros(1)
-
+	
 	if rank==0:
 		stop[0]=0
 		x[0]=0.1
