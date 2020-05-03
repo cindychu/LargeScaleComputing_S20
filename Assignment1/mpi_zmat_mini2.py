@@ -52,6 +52,10 @@ def mini_parallel(x,stop,size):
 
 def sim_rho_parallel(n_runs):
 	t0 = time.time()
+	#print('start %f' % t0)
+	#comm.Bcast()
+	#print('start broadcast')
+
 	#N=int(n_runs/size)
 	stop=np.ones(1)
 	x=np.zeros(1)
@@ -79,6 +83,8 @@ def sim_rho_parallel(n_runs):
 		time_elapsed = time.time() - t0
 		print("Simulated %d in: %f seconds on %d MPI processes" % (n_runs, time_elapsed, size))
 		print("Max Period: %f; Max Rho: %f." % (max_periods,max_rho))			
+
+		#plot 
 
 
 def main():
