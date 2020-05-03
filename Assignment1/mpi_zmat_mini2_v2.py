@@ -34,7 +34,8 @@ def mini_parallel(x,stop):
   #print(stop)
   stop[0]=comm.bcast(stop[0], root=0)
   if stop[0]==0:
-    comm.Bcast(x,root=0)
+    print(rank,x[0])
+    x[0]=comm.bcast(x[0],root=0)
     rho=x[0]
     #print(rho)
     #mu=3.0
@@ -83,10 +84,11 @@ if rank==0:
   xmin=-0.95
   xmax=0.95
   rhomin=minimize(mini_parallel,x,args=(stop),method='COBYLA',bounds=((xmin,xmax),),options={'rhobeg':0.01,'tol':0.00001})
-  stop=[1]
+  stop[0]=1
   mini_parallel(x,stop)
 else:
   while stop[0]==0:
+    print(rank,x[0])
     mini_parallel(x,stop,size)
   
 if rank==0:
