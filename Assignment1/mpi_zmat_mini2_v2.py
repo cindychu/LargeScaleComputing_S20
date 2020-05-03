@@ -24,10 +24,10 @@ x=np.zeros(1)
 
 if rank==0:
   np.random.seed(25)
-  eps_mat=sts.norm.rvs(loc=0,scale=sigma,size=(T,N*size))
-else:
-  eps_mat=np.empty([T,N],dtype='float')
-comm.Bcast(eps_mat,root=0)
+  eps_mat0=sts.norm.rvs(loc=0,scale=sigma,size=(T,N*size))
+  
+eps_mat=np.empty([T,N],dtype='float')
+comm.Scatter(eps_mat0,eps_mat,root=0)
 
 
 def mini_parallel(x,stop):
