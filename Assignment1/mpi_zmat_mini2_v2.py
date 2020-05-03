@@ -11,7 +11,9 @@ def mini_parallel(x,stop):
   print('after scatter stop')
   if stop[0]==0:
     print("In minimize: proc%d, %f." % (rank,x[0]))
+    print(np.shape(x[0]))
     x[0]=comm.bcast(x[0],root=0)
+    print('after scatter x')
     rho=x[0]
     #print(rho)
     #mu=3.0
@@ -46,13 +48,17 @@ def mini_parallel(x,stop):
     #if rank==0:
       #t_all = np.empty([N*size, 1], dtype='float')
     #comm.Gather(sendbuf = all_t_array, recvbuf = t_all, root=0)
+    print('before gather results')
     all_t_array=comm.gather(all_t_array,root=0)
+    print('after gather results')
+
     
     if rank==0:
       #avgt=sum(t_all)/len(t_all)
       avgt=np.mean(all_t_array)
       print(rho,avgt)
-      return -avgt 
+  
+  return -avgt 
 
 
 comm = MPI.COMM_WORLD
