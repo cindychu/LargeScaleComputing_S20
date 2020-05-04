@@ -60,6 +60,8 @@ def sim_index_parallel(n_runs):
                     avg_t.append(i)
                     #print(i,z_t)
                     break
+                if i==T:
+                    avg_t.append(i)
                 z_tm1=z_t
         avgt=sum(avg_t)/len(avg_t)
         rho_avgt.append((rho,avgt))

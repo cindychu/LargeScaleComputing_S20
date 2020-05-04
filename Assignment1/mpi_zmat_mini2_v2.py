@@ -51,10 +51,10 @@ def mini_parallel(x,stop):
     print('before gather results')
     all_t_array=comm.gather(all_t_array,root=0)
     print('after gather results')
-
     
     if rank==0:
       #avgt=sum(t_all)/len(t_all)
+      print(np.shape(all_t_array))
       avgt=np.mean(all_t_array)
       print(rho,avgt)
   
@@ -97,6 +97,7 @@ if rank==0:
   stop[0]=2
   mini_parallel(x,stop)
 else:
+  print("In minimize: proc%d, stop%f, ." % (rank,stop[0]))
   while stop[0]!=2:
     print("Before minimize: proc%d, %f." % (rank,x[0]))
     mini_parallel(x,stop)
