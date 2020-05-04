@@ -97,11 +97,11 @@ if rank==0:
   xmax=0.95
   print('Before minimize')
   rhomin=minimize(mini_parallel,x,args=(stop),method='COBYLA',bounds=((xmin,xmax),),options={'rhobeg':0.01,'tol':0.00001})
-  stop[0]=2
+  stop[0]=2 #stop
   mini_parallel(x,stop)
 else:
   print("In minimize: proc%d, stop%f, ." % (rank,stop[0]))
-  while stop[0]==0:
+  while stop[0]!=2:
     print("Before minimize: proc%d, %f." % (rank,x[0]))
     mini_parallel(x,stop)
   
