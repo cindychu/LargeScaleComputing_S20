@@ -11,7 +11,7 @@ def mini_parallel(x,stop):
   print('after scatter stop')
   if stop[0]==0:
     print("In minimize: proc%d, %f." % (rank,x[0]))
-    print(np.shape(x[0]))
+    print(np.shape(x))
     x[0]=comm.bcast(x[0],root=0)
     print('after scatter x')
     rho=x[0]
@@ -54,7 +54,7 @@ def mini_parallel(x,stop):
     
     if rank==0:
       #avgt=sum(t_all)/len(t_all)
-      print(np.shape(all_t_array))
+      print(rho,np.shape(all_t_array))
       avgt=np.mean(all_t_array)
       print(rho,avgt)
   
@@ -98,7 +98,7 @@ if rank==0:
   mini_parallel(x,stop)
 else:
   print("In minimize: proc%d, stop%f, ." % (rank,stop[0]))
-  while stop[0]!=2:
+  while stop[0]==0:
     print("Before minimize: proc%d, %f." % (rank,x[0]))
     mini_parallel(x,stop)
   
