@@ -86,7 +86,6 @@ def sim_rho_parallel(n_runs):
 
 		#plot 
 
-
 def main():
 	sim_rho_parallel(n_runs = 1000)
 
