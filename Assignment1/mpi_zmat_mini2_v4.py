@@ -1,3 +1,10 @@
+from mpi4py import MPI
+import matplotlib.pyplot as plt
+import numpy as np
+import time
+import scipy.stats as sts
+from scipy.optimize import minimize
+
 def mini_parallel(x,stop):
   print('before scatter stop')
   stop[0]=comm.bcast(stop[0], root=0)

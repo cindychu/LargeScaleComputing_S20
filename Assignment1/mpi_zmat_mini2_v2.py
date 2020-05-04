@@ -9,6 +9,7 @@ def mini_parallel(x,stop):
   print('before scatter stop')
   stop[0]=comm.bcast(stop[0], root=0)
   print('after scatter stop')
+  avgt=0
   if stop[0]==0:
     print("In minimize: proc%d, %f." % (rank,x[0]))
     print(np.shape(x))
@@ -42,6 +43,7 @@ def mini_parallel(x,stop):
           break
         z_tm1=z_t
     all_t_array=np.array(all_t)
+    print(rho,np.shape(all_t_array))
     #print(np.mean(all_t_array))
   
     # Gather all simulation arrays to buffer of expected size/dtype on rank 0
@@ -88,6 +90,7 @@ comm.Scatter(eps_mat0,eps_mat,root=0)
 print('Scatter EPS successfully')
 
 if rank==0:
+  print("In minimize: proc%d, stop%f, ." % (rank,stop[0]))
   stop[0]=0
   x[0]=0.1
   xmin=-0.95
