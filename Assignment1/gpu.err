@@ -1,2 +1,0 @@
-/software/Anaconda3-5.1.0-el7-x86_64/lib/python3.6/site-packages/scipy/optimize/_minimize.py:528: RuntimeWarning: Method COBYLA cannot handle bounds.
-  RuntimeWarning)
