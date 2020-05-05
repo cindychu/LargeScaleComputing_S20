@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=gpu   # job name
-#SBATCH --output=gpu_zmat_mini.out # output log file
+#SBATCH --output=gpu_zmat_mini2.out # output log file
 #SBATCH --error=gpu.err  # error file
 #SBATCH --time=00:15:00  # 5 minutes of wall time
 #SBATCH --nodes=1        # 1 GPU node
@@ -12,4 +12,4 @@ module load cuda
 module load mpi4py/3.0.1a0_py3
 
 #python ./print_gpu_info.py
-python ./gpu_zmat_mini.py
+python ./gpu_zmat_mini2.py
