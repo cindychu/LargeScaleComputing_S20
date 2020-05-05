@@ -12,9 +12,8 @@ def mini_parallel(x,stop):
   avgt=0
   if stop[0]==0:
     print("In minimize: proc%d, %f." % (rank,x[0]))
-    print(np.shape(x))
     x[0]=comm.bcast(x[0],root=0)
-    print('after scatter x')
+    #print('after scatter x')
     rho=x[0]
     #print(rho)
     #mu=3.0
@@ -53,18 +52,20 @@ def mini_parallel(x,stop):
       #t_all = np.empty([N*size, 1], dtype='float')
     #comm.Gather(sendbuf = all_t_array, recvbuf = t_all, root=0)
     print('before gather results')
-    #all_t_array=comm.gather(all_t_array,root=0)
+    t_array=np.empty([N*size, 1], dtype='float')
+    t_array=comm.gather(all_t_array,root=0)
 
-    rho_t_all = None
-    if rank == 0:
-        rho_t_all = np.empty([N*size, 1], dtype='float')
-    comm.Gather(sendbuf = all_t_array, recvbuf = rho_t_all, root=0)
+    #rho_t_all = None
+    #if rank == 0:
+    #    rho_t_all = np.empty([N*size, 1], dtype='float')
+    #comm.Gather(sendbuf = all_t_array, recvbuf = rho_t_all, root=0)
     print('after gather results')
+    #print(rank,rho,np.shape(all_t_array))
     
     if rank==0:
       #avgt=sum(t_all)/len(t_all)
-      print(rho,np.shape(rho_t_all))
-      avgt=np.mean(rho_t_all)
+      print(rho,np.shape(t_array))
+      avgt=np.mean(t_array)
       print(rho,avgt)
   
   return -avgt 

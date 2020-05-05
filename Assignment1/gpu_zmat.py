@@ -22,9 +22,9 @@ def sim_health_index(n_runs):
   z_0=mu
 
   # Generate an array of Normal Random Numbers on GPU of length n_sims*n_steps
-  n_steps = int(4160)
+  n_steps = int(4160)  #4160
   rand_gen = clrand.PhiloxGenerator(ctx)
-  ran = rand_gen.normal(queue, (n_runs*n_steps), np.float32, mu=0, sigma=sigma)
+  ran = rand_gen.normal(queue, (n_runs*n_steps), np.float32, mu=0, sigma=1.0)
 
   # Establish boundaries for each simulated walk (i.e. start and end)
   # Necessary so that we perform scan only within rand walks and not between
@@ -37,8 +37,8 @@ def sim_health_index(n_runs):
   prefix_sum = GenericScanKernel(ctx, np.float32,
               arguments="__global float *ary, __global char *segflags, "
                   "__global float *out, float rho, float mu",
-              input_expr="ary[i]",
-              scan_expr="across_seg_boundary ? b : (rho*a+(1-rho)*mu+b)", neutral="0",
+              input_expr="segflags[i] ? (ary[i]+mu):(ary[i]+(1-rho)*mu)",
+              scan_expr="across_seg_boundary ? (b):(rho*a+b)", neutral="0",
               is_segment_start_expr="segflags[i]",
               output_statement="out[i] = item",
               options=[])
@@ -55,7 +55,9 @@ def sim_health_index(n_runs):
   time_elapsed = final_time - t0
 
   print("Simulated %d Random Walks in: %f seconds"% (n_runs, time_elapsed))
-  plt.plot(health_index_all)
+  #print(health_index_all)
+  #print(ran.reshape(n_runs, n_steps).transpose())
+  #plt.plot(health_index_all)
   return
 
 def main():
