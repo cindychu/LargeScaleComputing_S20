@@ -82,7 +82,7 @@ def sim_health_index(n_runs):
   plt.title('Averaged periods of first negative index across Rho')
   plt.xlabel('Rho')
   plt.ylabel('Avged Period of first negative index')
-  plt.savefig("GPU_rho_avgt%d_nruns%d.png" % (size, n_runs))
+  plt.savefig("GPU_rho_avgt_nruns%d.png" % (n_runs))
 
   max_period=max(rho_avgt_t)
   max_rho=rho_set[rho_avgt_t.index(max_period)]
