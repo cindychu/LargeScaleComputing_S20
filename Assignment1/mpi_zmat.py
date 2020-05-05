@@ -53,7 +53,7 @@ def sim_index_parallel(n_runs):
         time_elapsed = time.time() - t0
 
         # Print time elapsed + simulation results
-        print("Simulated %d Random Walks in: %f seconds on %d MPI processes"
+        print("Simulated %d Health Index in: %f seconds on %d MPI processes"
                 % (n_runs, time_elapsed, size))
         #print("Average final position: %f, Standard Deviation: %f"
                 #% (average_finish, std_finish))

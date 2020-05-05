@@ -11,5 +11,5 @@
 module load cuda
 module load mpi4py/3.0.1a0_py3
 
-python ./print_gpu_info.py
-# python ./gpu_zmat.py
+#python ./print_gpu_info.py
+python ./gpu_zmat.py

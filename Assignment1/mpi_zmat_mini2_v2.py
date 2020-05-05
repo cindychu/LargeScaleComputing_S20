@@ -6,12 +6,12 @@ import scipy.stats as sts
 from scipy.optimize import minimize
 
 def mini_parallel(x,stop):
-  print('before scatter stop')
+  #print('before scatter stop')
   stop[0]=comm.bcast(stop[0], root=0)
-  print('after scatter stop')
+  #print('after scatter stop')
   avgt=0
   if stop[0]==0:
-    print("In minimize: proc%d, %f." % (rank,x[0]))
+    #print("In minimize: proc%d, %f." % (rank,x[0]))
     x[0]=comm.bcast(x[0],root=0)
     #print('after scatter x')
     rho=x[0]
@@ -44,14 +44,14 @@ def mini_parallel(x,stop):
           all_t.append(T)
         z_tm1=z_t
     all_t_array=np.array(all_t)
-    print(rho,np.shape(all_t_array))
+    #print(rho,np.shape(all_t_array))
     #print(np.mean(all_t_array))
   
     # Gather all simulation arrays to buffer of expected size/dtype on rank 0
     #if rank==0:
       #t_all = np.empty([N*size, 1], dtype='float')
     #comm.Gather(sendbuf = all_t_array, recvbuf = t_all, root=0)
-    print('before gather results')
+    #print('before gather results')
     t_array=np.empty([N*size, 1], dtype='float')
     t_array=comm.gather(all_t_array,root=0)
 
@@ -59,8 +59,7 @@ def mini_parallel(x,stop):
     #if rank == 0:
     #    rho_t_all = np.empty([N*size, 1], dtype='float')
     #comm.Gather(sendbuf = all_t_array, recvbuf = rho_t_all, root=0)
-    print('after gather results')
-    #print(rank,rho,np.shape(all_t_array))
+    #print('after gather results')
     
     if rank==0:
       #avgt=sum(t_all)/len(t_all)
@@ -95,7 +94,7 @@ else:
 
 eps_mat=np.empty([T,N],dtype='float')
 comm.Scatter(eps_mat0,eps_mat,root=0)
-print('Scatter EPS successfully')
+#print('Scatter EPS successfully')
 
 if rank==0:
   print("In minimize: proc%d, stop%f, ." % (rank,stop[0]))
@@ -103,19 +102,21 @@ if rank==0:
   x[0]=0.1
   xmin=-0.95
   xmax=0.95
-  print('Before minimize')
+  #print('Before minimize')
   rhomin=minimize(mini_parallel,x,args=(stop),method='COBYLA',bounds=((xmin,xmax),),options={'rhobeg':0.01,'tol':0.00001})
   stop[0]=2 #stop
   mini_parallel(x,stop)
 else:
   print("In minimize: proc%d, stop%f, ." % (rank,stop[0]))
   while stop[0]!=2:
-    print("Before minimize: proc%d, %f." % (rank,x[0]))
+    #print("Before minimize: proc%d, %f." % (rank,x[0]))
     mini_parallel(x,stop)
   
 if rank==0:
-  print(rhomin.fun)
-  print(rhomin.x)
+  time_elapsed = time.time() - t0
+  print("Simulated %d in: %f seconds on %d MPI processes" % (n_runs, time_elapsed, size))
+  print("Maximized avged period: %f" % (-rhomin.fun))
+  print("Rho for Maximized avg period: %f" % (rhomin.x))
 
 
           

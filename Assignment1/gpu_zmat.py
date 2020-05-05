@@ -54,7 +54,7 @@ def sim_health_index(n_runs):
   final_time = time.time()
   time_elapsed = final_time - t0
 
-  print("Simulated %d Random Walks in: %f seconds"% (n_runs, time_elapsed))
+  print("Simulated %d Health Index in: %f seconds"% (n_runs, time_elapsed))
   #print(health_index_all)
   #print(ran.reshape(n_runs, n_steps).transpose())
   #plt.plot(health_index_all)
