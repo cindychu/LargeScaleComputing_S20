@@ -13,6 +13,7 @@ def sim_health_index(n_runs):
   # Set up OpenCL context and command queue
   ctx = cl.create_some_context()
   queue = cl.CommandQueue(ctx)
+  mem_pool = cltools.MemoryPool(cltools.ImmediateAllocator(queue))
 
   t0 = time.time()
 
@@ -43,7 +44,7 @@ def sim_health_index(n_runs):
               output_statement="out[i] = item",
               options=[])
   
-  dev_result = cl_array.empty_like(ran)
+  dev_result = cl_array.arange(queue, len(ran), dtype=np.float32, allocator=mem_pool)
 
   # Enqueue and Run Scan Kernel
   prefix_sum(ran,seg_boundary_flags,dev_result,rho,mu)

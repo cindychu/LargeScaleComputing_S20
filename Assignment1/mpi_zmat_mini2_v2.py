@@ -63,9 +63,9 @@ def mini_parallel(x,stop):
     
     if rank==0:
       #avgt=sum(t_all)/len(t_all)
-      print(rho,np.shape(t_array))
+      #print(rho,np.shape(t_array))
       avgt=np.mean(t_array)
-      print(rho,avgt)
+      #print(rho,avgt)
   
   return -avgt 
 
@@ -104,6 +104,7 @@ if rank==0:
   xmax=0.95
   #print('Before minimize')
   rhomin=minimize(mini_parallel,x,args=(stop),method='COBYLA',bounds=((xmin,xmax),),options={'rhobeg':0.01,'tol':0.00001})
+  time_elapsed = time.time() - t0
   stop[0]=2 #stop
   mini_parallel(x,stop)
 else:
@@ -113,7 +114,6 @@ else:
     mini_parallel(x,stop)
   
 if rank==0:
-  time_elapsed = time.time() - t0
   print("Simulated %d in: %f seconds on %d MPI processes" % (n_runs, time_elapsed, size))
   print("Maximized avged period: %f" % (-rhomin.fun))
   print("Rho for Maximized avg period: %f" % (rhomin.x))

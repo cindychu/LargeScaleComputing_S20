@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=mpi_mini2
 #SBATCH --output=mpi_mini2.out
-#SBATCH --ntasks=3
+#SBATCH --ntasks=20
 #SBATCH --partition=broadwl
 #SBATCH --constraint=fdr
 
